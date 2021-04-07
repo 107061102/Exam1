@@ -10,16 +10,41 @@ DigitalIn But3(A0);
 DigitalIn mypin(USER_BUTTON);
 InterruptIn button(USER_BUTTON);
 AnalogIn VIN(A3);
-EventQueue queue(32 * EVENTS_EVENT_SIZE);
+EventQueue queue_generate(32 * EVENTS_EVENT_SIZE);
+EventQueue queue_sample(32 * EVENTS_EVENT_SIZE);
 Thread t;
+Thread s;
 
 int frequency = 1;
-
+float sample2[240];
+void wave_generate(){
+      int i;
+      while(1){
+            for (i = 0; i < (80/frequency); i++){
+                  aout.write_u16((uint16_t)(59578 * i * frequency/ 80));
+                  ThisThread::sleep_for(1ms);
+                  sample2[i] = float(VIN);
+            }
+            for (i = 80/frequency; i < 240 - (80/frequency); i++){
+                  aout.write_u16((uint16_t)(59578));
+                  ThisThread::sleep_for(1ms);
+                  sample2[i] = float(VIN);
+            }
+            for (i = 0; i < (80/frequency); i++){
+                  aout.write_u16((uint16_t)(59578 * ((80/frequency) - i) * frequency/ 80));
+                  ThisThread::sleep_for(1ms);
+                  sample2[240 + i - 80/frequency] = float(VIN);
+            }
+    }
+}
 
 void wave_sample(){
       int i;
       for (i = 0; i < 240; i++){
-            printf("%f\r\n", VIN);
+            printf("%f\r\n", sample2[i]);
+      }
+      for (i = 0; i < 240; i++){
+            printf("%f\r\n", sample2[i]);
       }
 
 }
@@ -27,10 +52,11 @@ void wave_sample(){
 int main(){
     int i;
     uint16_t sample = 0;
-    float sample2[240];
+    
 
-    t.start(callback(&queue, &EventQueue::dispatch_forever));
-    button.rise(queue.event(wave_sample));
+    t.start(callback(&queue_generate, &EventQueue::dispatch_forever));
+    s.start(callback(&queue_sample, &EventQueue::dispatch_forever));
+    button.rise(queue_sample.event(wave_sample));
     while(1){
         if (But1 == 1 && frequency != 1){
             frequency /= 2;
@@ -69,18 +95,6 @@ int main(){
 
         }
     }
-    while(1){
-            for (i = 0; i < (80/frequency); i++){
-                  aout.write_u16((uint16_t)(59578 * i * frequency/ 80));
-                  wait_us(1000);
-            }
-            for (i = 80/frequency; i < 240 - (80/frequency); i++){
-                  aout.write_u16((uint16_t)(59578));
-                  wait_us(1000);
-            }
-            for (i = 0; i < (80/frequency); i++){
-                  aout.write_u16((uint16_t)(59578 * ((80/frequency) - i) * frequency/ 80));
-                  wait_us(1000);
-            }
-    }
+    queue_generate.call(wave_generate);
+    
 }
