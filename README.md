@@ -6,5 +6,5 @@
 把PA_4接到A3，如果要使用picoscope就直接量PA_4的值  
 執行的時候先按Buttom3才能顯示出數字。  
 選好頻率之後案Buttom2，之後就會開始產生週期波。  
-如果要傳到PC需要按UserButtom，若要執行FFT，要先執行FFT.py在案user buttom。
+如果要傳到PC需要按UserButtom，若要執行FFT，要先執行FFT.py在案user buttom。  
 結果放在word檔裡，可以看出slew rate越大，FFT在頻率4的地方越明顯。
