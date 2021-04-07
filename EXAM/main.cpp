@@ -14,7 +14,7 @@ EventQueue queue_sample(32 * EVENTS_EVENT_SIZE);
 Thread t;
 Thread s;
 
-int frequency = 1; 
+int frequency = 1;
 float sample2[480];
 void wave_generate(){
       int i,j;
