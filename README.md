@@ -1,6 +1,6 @@
 # Exam1
 
-將buttom1, buttom2, buttom3接到 A2, A1, A0
+將buttom1, buttom2, buttom3接到 A2, A1, A0  
 buttom3是 1->1/8  
 buttom2是commit  
 buttom1是1/8->1  
