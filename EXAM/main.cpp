@@ -7,7 +7,6 @@ AnalogOut aout(PA_4);
 DigitalIn But1(A2);
 DigitalIn But2(A1);
 DigitalIn But3(A0);
-DigitalIn mypin(USER_BUTTON);
 InterruptIn button(USER_BUTTON);
 AnalogIn VIN(A3);
 EventQueue queue_generate(32 * EVENTS_EVENT_SIZE);
@@ -16,34 +15,33 @@ Thread t;
 Thread s;
 
 int frequency = 1;
-float sample2[240];
+float sample2[480];
 void wave_generate(){
-      int i;
+      int i,j;
       while(1){
-            for (i = 0; i < (80/frequency); i++){
-                  aout.write_u16((uint16_t)(59578 * i * frequency/ 80));
-                  ThisThread::sleep_for(1ms);
-                  sample2[i] = float(VIN);
-            }
-            for (i = 80/frequency; i < 240 - (80/frequency); i++){
-                  aout.write_u16((uint16_t)(59578));
-                  ThisThread::sleep_for(1ms);
-                  sample2[i] = float(VIN);
-            }
-            for (i = 0; i < (80/frequency); i++){
-                  aout.write_u16((uint16_t)(59578 * ((80/frequency) - i) * frequency/ 80));
-                  ThisThread::sleep_for(1ms);
-                  sample2[240 + i - 80/frequency] = float(VIN);
+            for(j = 0; j < 2; j++){
+                  for (i = 0; i < (80/frequency); i++){
+                        aout.write_u16((uint16_t)(59578 * i * frequency/ 80));
+                        ThisThread::sleep_for(1ms);
+                        sample2[i + 240 * j] = float(VIN);
+                  }
+                  for (i = 80/frequency; i < 240 - (80/frequency); i++){
+                        aout.write_u16((uint16_t)(59578));
+                        ThisThread::sleep_for(1ms);
+                        sample2[i + 240 * j] = float(VIN);
+                  }
+                  for (i = 0; i < (80/frequency); i++){
+                        aout.write_u16((uint16_t)(59578 * ((80/frequency) - i) * frequency/ 80));
+                        ThisThread::sleep_for(1ms);
+                        sample2[240 * j + 240 + i - 80/frequency] = float(VIN);
+                  }
             }
     }
 }
 
 void wave_sample(){
       int i;
-      for (i = 0; i < 240; i++){
-            printf("%f\r\n", sample2[i]);
-      }
-      for (i = 0; i < 240; i++){
+      for (i = 0; i < 480; i++){
             printf("%f\r\n", sample2[i]);
       }
 
