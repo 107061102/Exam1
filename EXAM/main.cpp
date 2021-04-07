@@ -7,7 +7,6 @@ AnalogOut aout(PA_4);
 DigitalIn But1(A2);
 DigitalIn But2(A1);
 DigitalIn But3(A0);
-DigitalIn mypin(USER_BUTTON);
 InterruptIn button(USER_BUTTON);
 AnalogIn VIN(A3);
 EventQueue queue_generate(32 * EVENTS_EVENT_SIZE);
